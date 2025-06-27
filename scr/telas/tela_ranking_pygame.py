@@ -7,12 +7,11 @@ class TelaRankingPygame:
     def __init__(self, tela: pygame.Surface, ranking_manager: RankingManager) -> None:
         self.tela = tela
         self.ranking_manager = ranking_manager
-        self.fonte_titulo: pygame.font.Font = pygame.font.Font(None, 80) # Fonte maior
+        self.fonte_titulo: pygame.font.Font = pygame.font.Font(None, 80) 
         
         try:
             self.fonte_itens: pygame.font.Font = pygame.font.SysFont('monospace', 40)
         except pygame.error:
-            # Fallback para a fonte padrão caso a monoespaçada não seja encontrada
             self.fonte_itens: pygame.font.Font = pygame.font.Font(None, 45)
         self.fonte_instrucao: pygame.font.Font = pygame.font.Font(None, 36)
 
@@ -27,15 +26,14 @@ class TelaRankingPygame:
         titulo_rect: pygame.Rect = titulo_surf.get_rect(center=(Constantes.LARGURA // 2, Constantes.ALTURA * 0.15))
         self.tela.blit(titulo_surf, titulo_rect)
 
-        y_pos: int = Constantes.ALTURA * 0.3 # Posição Y inicial
-        espacamento = 50 # Espaçamento entre os itens
+        y_pos: int = Constantes.ALTURA * 0.3 
+        espacamento = 50 
 
         if not self.ranking_manager.jogadores:
             texto_vazio_surf: pygame.Surface = self.fonte_itens.render("Ranking vazio!", True, self.cor_texto_ranking)
             texto_vazio_rect: pygame.Rect = texto_vazio_surf.get_rect(center=(Constantes.LARGURA // 2, y_pos))
             self.tela.blit(texto_vazio_surf, texto_vazio_rect)
         else:
-            # Exibe apenas os 10 primeiros
             for i, jogador in enumerate(self.ranking_manager.jogadores[:10]):
                 posicao_texto: str = f"{i + 1}."
                 nome_texto: str = jogador.nome

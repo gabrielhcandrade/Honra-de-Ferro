@@ -6,7 +6,7 @@ class Particle(pygame.sprite.Sprite):
     def __init__(self, pos: Tuple[int, int], cor: Tuple[int, int, int], direcao: Tuple[float, float] = (0,0)):
         super().__init__()
         self.x, self.y = pos
-        # Partículas se movem em direções aleatórias
+
         self.vx = direcao[0] + random.uniform(-2, 2)
         self.vy = direcao[1] + random.uniform(-3, 1)
         self.rad = random.randint(4, 7)

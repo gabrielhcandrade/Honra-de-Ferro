@@ -27,7 +27,6 @@ class Entidade(pygame.sprite.Sprite):
         self.image = self.animacoes.get(self.acao, [pygame.Surface((50,50))])[0]
         self.rect = self.image.get_rect()
 
-        # Grupo para gerenciar os pop-ups de dano da entidade
         self.grupo_popup_dano = pygame.sprite.Group()
 
     @property
@@ -39,7 +38,7 @@ class Entidade(pygame.sprite.Sprite):
         self._vida = max(0, min(valor, self.vida_maxima))
         if self._vida == 0 and self.acao != 'morrer':
             self.mudar_acao('morrer')
-            self.indice_frame = 0 # Garante que a animação de morte comece do início
+            self.indice_frame = 0 
 
     @property
     def vivo(self) -> bool:
@@ -67,7 +66,6 @@ class Entidade(pygame.sprite.Sprite):
             if self.indice_frame >= len(lista_frames):
                 if self.acao == 'morrer':
                     self.indice_frame = len(lista_frames) - 1
-                    # A entidade para no último frame de morte, a lógica de remoção fica na batalha
                 else:
                     self.indice_frame = 0
         

@@ -84,10 +84,7 @@ class BatalhaDragao:
         for _ in range(10):
             self.particles.add(Particle(pos, (255, 0, 0)))
 
-    # Método _checar_colisoes completo para referência
-
     def _checar_colisoes(self) -> None:
-        # Bloco de ataque do JOGADOR
         if self.jogador.pode_causar_dano():
             atingidos = pygame.sprite.spritecollide(self.jogador, self.esqueletos, False)
             for esqueleto in atingidos:
@@ -110,20 +107,17 @@ class BatalhaDragao:
                     self.pontuacao_final += 25
                     self._criar_particulas_sangue(self.dragao.rect.center)
 
-        # Bloco de ataque do ESQUELETO (NOVO)
         for esqueleto in self.esqueletos:
             if esqueleto.pode_causar_dano() and pygame.sprite.collide_rect(esqueleto, self.jogador):
                 if not self.jogador.defendendo:
                     self.jogador.receber_dano(esqueleto.dano)
                     self._criar_particulas_sangue(self.jogador.rect.center)
         
-        # Colisões com projéteis do dragão
         if self.dragao:
             atingido_por_fireball = pygame.sprite.spritecollide(self.jogador, self.fireballs, True)
             if atingido_por_fireball and not self.jogador.defendendo:
                 self.jogador.receber_dano(20)
 
-        # Colisão com poções
         coletadas = pygame.sprite.spritecollide(self.jogador, self.pocoes, True)
         if coletadas:
             self.jogador.coletar_pocao()
@@ -173,10 +167,7 @@ class BatalhaDragao:
         self.fireballs.draw(self.tela)
         for p in self.particles:
             p.draw(self.tela)
-
-        # 2. Lógica da UI com posicionamento corrigido e explícito
         
-        # CORREÇÃO: Valores de margem aumentados para mover a UI para a direita e para baixo.
         MARGEM_LATERAL = 200
         MARGEM_SUPERIOR = 120
         
@@ -184,7 +175,6 @@ class BatalhaDragao:
         ALTURA_BARRA_VIDA = 30
         ESPACO_TEXTO_Y = 35
 
-        # --- UI do Jogador (Canto Superior Esquerdo) ---
         y_atual = 120
         pct_jogador = (self.jogador.vida / self.jogador.vida_maxima) * 100 if self.jogador.vida_maxima > 0 else 0
         self.desenhar_barra_vida(self.tela, MARGEM_LATERAL, y_atual, pct_jogador, Constantes.VERDE, Constantes.VERMELHO, LARGURA_BARRA_VIDA, ALTURA_BARRA_VIDA)
@@ -207,9 +197,7 @@ class BatalhaDragao:
         dash_txt = self.font_ui.render(dash_txt_str, True, dash_cor)
         self.tela.blit(dash_txt, (MARGEM_LATERAL, y_atual))
 
-        # --- UI do Dragão (Canto Superior Direito) ---
         if self.dragao:
-            # A margem lateral da UI do dragão foi mantida pequena para ficar no canto.
             MARGEM_LATERAL_DRAGAO = 200
             x_barra_dragao = Constantes.LARGURA - LARGURA_BARRA_VIDA - MARGEM_LATERAL_DRAGAO
             y_atual_dragao = MARGEM_SUPERIOR
@@ -220,19 +208,14 @@ class BatalhaDragao:
             vida_dragao_txt = f"Vida: {self.dragao.vida} / {self.dragao.vida_maxima}"
             vida_dragao_surf = self.font_ui.render(vida_dragao_txt, True, Constantes.BRANCO)
             vida_dragao_rect = vida_dragao_surf.get_rect()
-            # Define a coordenada Y
             vida_dragao_rect.y = y_atual_dragao
-            # Alinha a borda DIREITA do texto com a borda DIREITA da barra de vida (com uma pequena margem)
             vida_dragao_rect.right = x_barra_dragao + LARGURA_BARRA_VIDA - 5
-            # Desenha o texto na tela usando o retângulo posicionado
             self.tela.blit(vida_dragao_surf, vida_dragao_rect)
 
-        # --- Pontuação (Centro Superior) ---
         pontos_txt = self.font.render(f"Pontuação: {self.pontuacao_final}", True, Constantes.BRANCO)
         pontos_rect = pontos_txt.get_rect(centerx=Constantes.LARGURA / 2, y=MARGEM_SUPERIOR)
         self.tela.blit(pontos_txt, pontos_rect)
         
-        # 3. Desenha os popups de dano
         for sprite in self.todos_sprites:
             if hasattr(sprite, 'grupo_popup_dano'):
                 sprite.grupo_popup_dano.draw(self.tela)
@@ -274,8 +257,7 @@ class BatalhaDragao:
 
         dragao_data = data.get("dragao")
         if dragao_data:
-            # Ao carregar, o dragão já deve estar na posição de batalha
             y_dragao = self.jogador.y_chao
             self.dragao = Dragao.from_dict(dragao_data, self.asset_manager, self.fireballs)
-            self.dragao.rect.bottom = y_dragao # Garante a posição Y correta
+            self.dragao.rect.bottom = y_dragao 
             self.todos_sprites.add(self.dragao)

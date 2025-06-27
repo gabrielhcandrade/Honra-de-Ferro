@@ -10,14 +10,11 @@ class BolaDeFogo(pygame.sprite.Sprite):
     def __init__(self, origem: Tuple[int, int], alvo: Tuple[int, int], asset_manager: 'AssetManager') -> None:
         super().__init__()
         
-        # Imagem da bola de fogo vinda do AssetManager
         self.image: pygame.Surface = asset_manager.get_imagem('bola_de_fogo')
         self.rect: pygame.Rect = self.image.get_rect(center=origem)
 
-        # Velocidade configurável
         velocidade = 6
 
-        # Calcula direção normalizada para o alvo
         dx = alvo[0] - origem[0]
         dy = alvo[1] - origem[1]
         dist = math.hypot(dx, dy)
@@ -26,7 +23,6 @@ class BolaDeFogo(pygame.sprite.Sprite):
         self._vel_y = (dy / dist * velocidade) if dist else 0
 
     def update(self, *args) -> None:
-        """Atualiza a posição da bola de fogo e remove se sair da tela."""
         self.rect.x += self._vel_x
         self.rect.y += self._vel_y
 
@@ -34,7 +30,6 @@ class BolaDeFogo(pygame.sprite.Sprite):
             self.rect.bottom < -50 or self.rect.top > Constantes.ALTURA + 50):
             self.kill()
 
-    # Getters (opcional, caso precise acessar de forma segura)
     @property
     def posicao(self) -> Tuple[int, int]:
         return self.rect.center

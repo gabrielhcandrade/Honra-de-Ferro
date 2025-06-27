@@ -12,17 +12,11 @@ class Menu:
         self.selecionado: int = 0
         self.fonte = fonte
 
-        # REMOVIDO: Bloco de código que carregava o 'icone_configuracao.png'.
-        # REMOVIDO: Linha que criava o 'self.botao_config'.
-
     def desenhar(self) -> None:
         self.tela.blit(self.fundo, (0, 0))
 
         for i, botao in enumerate(self.botoes):
             botao.desenhar(self.tela, i == self.selecionado)
-
-        # REMOVIDO: Linhas que desenhavam o retângulo e o ícone de configuração
-        # no canto da tela.
 
     def mover_selecao(self, direcao: int) -> None:
         self.selecionado = (self.selecionado + direcao) % len(self.botoes)
@@ -34,7 +28,5 @@ class Menu:
         for botao in self.botoes:
             if botao.clicado(pos):
                 return botao.texto
-        
-        # REMOVIDO: A verificação de clique no 'self.botao_config'.
         
         return None

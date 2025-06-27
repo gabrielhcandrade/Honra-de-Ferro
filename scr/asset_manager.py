@@ -61,7 +61,7 @@ class AssetManager:
     def _carregar_sons(self):
         sons = {
             'espada': '../assets/sons/espada.mp3',
-            'poder': '../assets/sons/poder.wav'
+            'poder': '../assets/sons/poder.mp3'
         }
         for chave, caminho in sons.items():
             try:

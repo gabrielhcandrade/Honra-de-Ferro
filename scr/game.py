@@ -124,7 +124,6 @@ class Game:
                 for evento in eventos:
                     if evento.type == pygame.KEYDOWN and evento.key == pygame.K_ESCAPE:
                         self.mostrar_menu_pausa()
-                # CORREÇÃO: Passa o volume dos efeitos para a atualização da batalha.
                 resultado = self.batalha.atualizar(self.config.volume_efeitos)
                 self.batalha.desenhar()
                 if resultado:

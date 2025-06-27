@@ -15,7 +15,6 @@ class ConfigScreen:
         self.fonte_grande: pygame.font.Font = pygame.font.Font(None, 75)
         self.fonte: pygame.font.Font = pygame.font.Font(None, 50)
 
-        # Centralizando os sliders na tela
         slider_width = Constantes.LARGURA * 0.4
         y_musica = Constantes.ALTURA * 0.4
         y_efeitos = Constantes.ALTURA * 0.6
@@ -30,15 +29,12 @@ class ConfigScreen:
         self.arrastando_efeitos: bool = False
 
     def desenhar(self, tela: pygame.Surface) -> None:
-        """Desenha a tela de configurações de forma centralizada."""
         tela.fill((40, 40, 40))
 
-        # Título
         titulo_surf = self.fonte_grande.render("Configurações", True, Constantes.COR_TEXTO)
         titulo_rect = titulo_surf.get_rect(center=(Constantes.LARGURA / 2, Constantes.ALTURA * 0.2))
         tela.blit(titulo_surf, titulo_rect)
 
-        # Controles de Música
         label_musica_surf = self.fonte.render("Música:", True, Constantes.COR_TEXTO)
         label_musica_rect = label_musica_surf.get_rect(midright=(self.slider_musica_rect.left - 30, self.slider_musica_rect.centery))
         tela.blit(label_musica_surf, label_musica_rect)
@@ -47,7 +43,6 @@ class ConfigScreen:
         pos_circulo_musica: int = int(self.slider_musica_rect.x + self.slider_musica_rect.width * self.volume_musica)
         pygame.draw.circle(tela, (255, 0, 0), (pos_circulo_musica, self.slider_musica_rect.centery), 15)
 
-        # Controles de Efeitos
         label_efeitos_surf = self.fonte.render("Efeitos:", True, Constantes.COR_TEXTO)
         label_efeitos_rect = label_efeitos_surf.get_rect(midright=(self.slider_efeitos_rect.left - 30, self.slider_efeitos_rect.centery))
         tela.blit(label_efeitos_surf, label_efeitos_rect)
@@ -57,11 +52,9 @@ class ConfigScreen:
         pygame.draw.circle(tela, (0, 255, 0), (pos_circulo_efeitos, self.slider_efeitos_rect.centery), 15)
 
     def processar_eventos(self, eventos: List[pygame.event.Event]) -> None:
-        """Processa eventos de mouse para os sliders."""
         for evento in eventos:
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 if evento.button == 1:
-                    # Aumenta a área de colisão do slider para ser mais fácil de clicar
                     if self.slider_musica_rect.inflate(0, 40).collidepoint(evento.pos):
                         self.arrastando_musica = True
                         self.ajustar_volume(evento.pos)
@@ -78,7 +71,6 @@ class ConfigScreen:
                     self.ajustar_volume(evento.pos)
 
     def ajustar_volume(self, pos: Tuple[int, int]) -> None:
-        """Ajusta o volume baseado na posição do mouse."""
         x, y = pos
         if self.arrastando_musica:
             novo_volume: float = (x - self.slider_musica_rect.x) / self.slider_musica_rect.width

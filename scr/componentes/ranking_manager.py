@@ -1,9 +1,9 @@
 import json
 from typing import List, Dict, Union
-from jogador_ranking import JogadorRanking # CORREÇÃO: Importação local
+from jogador_ranking import JogadorRanking 
 
 class RankingManager:
-    def __init__(self, nome_arquivo: str = "../assets/ranking/ranking_data.json") -> None: # CORREÇÃO: Caminho padrão
+    def __init__(self, nome_arquivo: str = "../assets/ranking/ranking_data.json") -> None: 
         self.nome_arquivo = nome_arquivo
         self.jogadores: List[JogadorRanking] = []
         self.carregar_de_arquivo()

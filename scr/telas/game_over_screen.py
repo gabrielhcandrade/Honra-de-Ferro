@@ -7,7 +7,7 @@ class GameOverScreen:
     def __init__(self, tela: pygame.Surface) -> None:
         self.tela = tela
         self.fonte: pygame.font.Font = pygame.font.Font(None, 50)
-        self.fonte_titulo: pygame.font.Font = pygame.font.Font(None, 100) # Fonte maior
+        self.fonte_titulo: pygame.font.Font = pygame.font.Font(None, 100) 
         self.opcoes: List[str] = ["Continuar", "Novo Jogo", "Sair para Menu"]
         self.selecionado: int = 0
         self.botoes_rects: List[pygame.Rect] = []
@@ -16,13 +16,12 @@ class GameOverScreen:
         """Desenha a tela de Game Over centralizada."""
         self.tela.fill((20, 0, 0))
         titulo: pygame.Surface = self.fonte_titulo.render("Você Morreu", True, Constantes.VERMELHO)
-        titulo_rect = titulo.get_rect(center=(Constantes.LARGURA // 2, Constantes.ALTURA * 0.3)) # Posição relativa
+        titulo_rect = titulo.get_rect(center=(Constantes.LARGURA // 2, Constantes.ALTURA * 0.3)) 
         self.tela.blit(titulo, titulo_rect)
 
         self.botoes_rects = []
-        # Posição Y inicial para as opções
         y_inicial = Constantes.ALTURA * 0.5
-        espacamento = 80 # Espaçamento maior entre as opções
+        espacamento = 80 
 
         for i, texto in enumerate(self.opcoes):
             cor: Tuple[int, int, int] = Constantes.COR_SELECIONADA if i == self.selecionado else Constantes.COR_TEXTO
