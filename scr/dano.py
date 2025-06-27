@@ -7,7 +7,7 @@ class DanoPopup(pygame.sprite.Sprite):
         fonte = pygame.font.SysFont(None, 30, bold=True)
         self.image = fonte.render(texto, True, cor)
         self.rect = self.image.get_rect(center=pos)
-        self.lifespan = 30 # Frames de vida
+        self.lifespan = 30 
         self.move_speed = 1
 
     def update(self):

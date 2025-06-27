@@ -31,5 +31,4 @@ class RankingManager:
             print(f"Erro ao salvar ranking: {e}")
 
     def existe_nome(self, nome: str) -> bool:
-        """Verifica se um nome (ignorando maiúsculas/minúsculas) já existe."""
         return any(j.nome.lower() == nome.lower() for j in self.jogadores)
