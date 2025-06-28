@@ -1,17 +1,17 @@
 {
-    "nome_jogador_atual": "ggf",
+    "nome_jogador_atual": "brenin",
     "batalha_estado": {
         "jogador": {
-            "vida": 110,
-            "x": 1130,
+            "vida": 160,
+            "x": 1375,
             "y": 828,
             "acao": "atacar",
-            "indice_frame": 3,
+            "indice_frame": 2,
             "direcao": 1,
-            "num_pocoes": 4,
+            "num_pocoes": 5,
             "y_chao": 900,
             "vida_maxima": 200,
-            "last_dash_time": 22175
+            "last_dash_time": -3000
         },
         "dragao": null,
         "fase_batalha": 2,
