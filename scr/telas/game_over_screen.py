@@ -13,7 +13,6 @@ class GameOverScreen:
         self.botoes_rects: List[pygame.Rect] = []
 
     def desenhar(self) -> None:
-        """Desenha a tela de Game Over centralizada."""
         self.tela.fill((20, 0, 0))
         titulo: pygame.Surface = self.fonte_titulo.render("Você Morreu", True, Constantes.VERMELHO)
         titulo_rect = titulo.get_rect(center=(Constantes.LARGURA // 2, Constantes.ALTURA * 0.3)) 
