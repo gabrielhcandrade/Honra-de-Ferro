@@ -1,13 +1,13 @@
 import pygame
 import os
 from constantes import Constantes
-from typing import Optional
+from typing import Optional, List, Dict
 
 class AssetManager:
     def __init__(self) -> None:
-        self._animations: dict[str, dict[str, list[pygame.Surface]]] = {}
-        self._images: dict[str, pygame.Surface] = {}
-        self._sounds: dict[str, pygame.mixer.Sound] = {}
+        self._animations: Dict[str, Dict[str, List[pygame.Surface]]] = {}
+        self._images: Dict[str, pygame.Surface] = {}
+        self._sounds: Dict[str, pygame.mixer.Sound] = {}
 
         self._carregar_fontes()
         self._carregar_recursos()
@@ -25,13 +25,16 @@ class AssetManager:
             self._fonte_100 = pygame.font.SysFont(None, 100)
 
     @property
-    def fonte_30(self): return self._fonte_30
+    def fonte_30(self) -> pygame.font.Font: 
+        return self._fonte_30
 
     @property
-    def fonte_50(self): return self._fonte_50
+    def fonte_50(self) -> pygame.font.Font: 
+        return self._fonte_50
 
     @property
-    def fonte_100(self): return self._fonte_100
+    def fonte_100(self) -> pygame.font.Font: 
+        return self._fonte_100
 
     def _criar_placeholder(self) -> pygame.Surface:
         placeholder = pygame.Surface((50, 50))
@@ -72,11 +75,9 @@ class AssetManager:
     def _carregar_animacoes(self):
         self._carregar_pasta_animacao('guerreiro', ['parar', 'correr', 'atacar', 'pular', 'morrer', 'defender'])
         self._carregar_pasta_animacao('inimigo', ['correr', 'atacar', 'morrer'])
-        
-        # CORREÇÃO: Dragão agora só precisa das animações 'parar' e 'morrer'.
         self._carregar_pasta_animacao('dragao', ['parar', 'morrer'], scale_factor=3)
 
-    def _carregar_pasta_animacao(self, nome_personagem, lista_acoes, scale_factor=1):
+    def _carregar_pasta_animacao(self, nome_personagem: str, lista_acoes: List[str], scale_factor: int = 1):
         if nome_personagem not in self._animations:
             self._animations[nome_personagem] = {}
 
@@ -91,10 +92,9 @@ class AssetManager:
                         int(f.get_height() * scale_factor)
                     )) for f in frames
                 ]
-
             self._animations[nome_personagem][acao] = frames
 
-    def _carregar_frames_de_pasta(self, caminho_pasta: str) -> list[pygame.Surface]:
+    def _carregar_frames_de_pasta(self, caminho_pasta: str) -> List[pygame.Surface]:
         frames = []
         if not os.path.exists(caminho_pasta):
             print(f"AVISO: Pasta de animação não encontrada em '{caminho_pasta}'")
@@ -116,7 +116,7 @@ class AssetManager:
             return [self._criar_placeholder()]
         return frames
 
-    def get_animacao(self, personagem: str, acao: str) -> list[pygame.Surface]:
+    def get_animacao(self, personagem: str, acao: str) -> List[pygame.Surface]:
         return self._animations.get(personagem, {}).get(acao, [self._criar_placeholder()])
 
     def get_imagem(self, nome_imagem: str) -> pygame.Surface:

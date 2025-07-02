@@ -20,7 +20,7 @@ class Dragao(Entidade):
         
         self.rect = self.image.get_rect(topleft=(x, y))
         
-        self.grupo_projeteis = grupo_projeteis
+        self._grupo_projeteis = grupo_projeteis
         self._ataque_cooldown: int = 2000 
         self._tempo_ultimo_ataque: int = pygame.time.get_ticks()
 
@@ -41,15 +41,15 @@ class Dragao(Entidade):
             origem_pos = (origem_x, origem_y)
             alvo_pos = rect_jogador.center
             
-            bola = BolaDeFogo(origem_pos, alvo_pos, self.asset_manager)
-            self.grupo_projeteis.add(bola)
+            bola = BolaDeFogo(origem_pos, alvo_pos, self._asset_manager)
+            self._grupo_projeteis.add(bola)
 
         super().update()
         
     def to_dict(self) -> dict:
         data = super().to_dict()
         data.update({
-            "vida_maxima": self.vida_maxima,
+            "vida_maxima": self.get_vida_maxima(),
         })
         return data
 
@@ -62,8 +62,29 @@ class Dragao(Entidade):
             grupo_projeteis=grupo_projeteis,
             vida=data.get("vida_maxima", 500)
         )
-        dragao.vida = data.get("vida", dragao.vida_maxima)
-        dragao.acao = data.get("acao", "parar")
-        dragao.indice_frame = data.get("indice_frame", 0)
+        dragao.vida = data.get("vida", dragao.get_vida_maxima())
+        dragao.set_acao(data.get("acao", "parar"))
+        dragao.set_indice_frame(data.get("indice_frame", 0))
         dragao.animar()
         return dragao
+
+    @property
+    def get_grupo_projeteis(self) -> pygame.sprite.Group:
+        return self._grupo_projeteis
+
+    def set_grupo_projeteis(self, grupo: pygame.sprite.Group) -> None:
+        self._grupo_projeteis = grupo
+
+    @property
+    def get_ataque_cooldown(self) -> int:
+        return self._ataque_cooldown
+
+    def set_ataque_cooldown(self, cooldown: int) -> None:
+        self._ataque_cooldown = cooldown
+
+    @property
+    def get_tempo_ultimo_ataque(self) -> int:
+        return self._tempo_ultimo_ataque
+
+    def set_tempo_ultimo_ataque(self, tempo: int) -> None:
+        self._tempo_ultimo_ataque = tempo

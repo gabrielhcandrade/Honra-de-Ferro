@@ -6,27 +6,25 @@ from componentes.button import Button
 class Menu:
     def __init__(self, tela: pygame.Surface, fundo: pygame.Surface,
                  botoes: List[Button], fonte: pygame.font.Font) -> None:
-        self.tela = tela
-        self.fundo = fundo
-        self.botoes = botoes
-        self.selecionado: int = 0
-        self.fonte = fonte
+        self._tela = tela
+        self._fundo = fundo
+        self._botoes = botoes
+        self._selecionado: int = 0
+        self._fonte = fonte
 
     def desenhar(self) -> None:
-        self.tela.blit(self.fundo, (0, 0))
-
-        for i, botao in enumerate(self.botoes):
-            botao.desenhar(self.tela, i == self.selecionado)
+        self._tela.blit(self._fundo, (0, 0))
+        for i, botao in enumerate(self._botoes):
+            botao.desenhar(self._tela, i == self._selecionado)
 
     def mover_selecao(self, direcao: int) -> None:
-        self.selecionado = (self.selecionado + direcao) % len(self.botoes)
+        self._selecionado = (self._selecionado + direcao) % len(self._botoes)
 
     def opcao_selecionada(self) -> str:
-        return self.botoes[self.selecionado].texto
+        return self._botoes[self._selecionado].get_texto()
 
     def verificar_clique(self, pos: Tuple[int, int]) -> Optional[str]:
-        for botao in self.botoes:
+        for botao in self._botoes:
             if botao.clicado(pos):
-                return botao.texto
-        
+                return botao.get_texto()
         return None

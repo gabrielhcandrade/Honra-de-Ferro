@@ -22,14 +22,6 @@ class BolaDeFogo(pygame.sprite.Sprite):
         self._vel_x = (dx / dist * velocidade) if dist else 0
         self._vel_y = (dy / dist * velocidade) if dist else 0
 
-    def update(self, *args) -> None:
-        self.rect.x += self._vel_x
-        self.rect.y += self._vel_y
-
-        if (self.rect.right < -50 or self.rect.left > Constantes.LARGURA + 50 or
-            self.rect.bottom < -50 or self.rect.top > Constantes.ALTURA + 50):
-            self.kill()
-
     @property
     def posicao(self) -> Tuple[int, int]:
         return self.rect.center
@@ -37,3 +29,14 @@ class BolaDeFogo(pygame.sprite.Sprite):
     @property
     def velocidade(self) -> Tuple[float, float]:
         return self._vel_x, self._vel_y
+        
+    def get_rect(self) -> pygame.Rect:
+        return self.rect
+
+    def update(self, *args) -> None:
+        self.rect.x += self._vel_x
+        self.rect.y += self._vel_y
+
+        if (self.rect.right < -50 or self.rect.left > Constantes.LARGURA + 50 or
+            self.rect.bottom < -50 or self.rect.top > Constantes.ALTURA + 50):
+            self.kill()

@@ -6,13 +6,12 @@ class Constantes:
     ROWS: int = 16
     TILE_SIZE: int = ALTURA // ROWS
 
-    PRETO: tuple[int, int, int]= (0, 0, 0)
-    BRANCO: tuple[int, int, int]= (255, 255, 255)
-    VERMELHO: tuple[int, int, int]= (255, 0, 0)
-    VERDE: tuple[int, int, int]= (0, 255, 0)
-    ROSA: tuple[int, int, int]= (0, 127, 255)
-    AMARELO: tuple[int, int, int] = (255, 255, 0)
-
+    PRETO: Tuple[int, int, int] = (0, 0, 0)
+    BRANCO: Tuple[int, int, int] = (255, 255, 255)
+    VERMELHO: Tuple[int, int, int] = (255, 0, 0)
+    VERDE: Tuple[int, int, int] = (0, 255, 0)
+    ROSA: Tuple[int, int, int] = (0, 127, 255)
+    AMARELO: Tuple[int, int, int] = (255, 255, 0)
 
     COR_TEXTO: Tuple[int, int, int] = (255, 255, 255)
     COR_SELECIONADA: Tuple[int, int, int] = (200, 200, 0)

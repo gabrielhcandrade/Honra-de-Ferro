@@ -26,29 +26,28 @@ class Jogador(Entidade):
         self._dano_aplicado = False
         self._tempo_ataque = 0
         self._ataque_cooldown = 400
-        self._direcao = 1
+        
+        self._is_dashing = False
+        self._dash_speed = 25
+        self._dash_duration = 150
+        self._dash_end_time = 0
+        self._dash_cooldown = 3000
+        self._last_dash_time = -self._dash_cooldown
 
-        self.is_dashing = False
-        self.dash_speed = 25
-        self.dash_duration = 150
-        self.dash_end_time = 0
-        self.dash_cooldown = 3000
-        self.last_dash_time = -self.dash_cooldown
-
-        for acao in self.animacoes:
-            self.animacoes[acao] = [
+        self._animacoes = self.get_animacoes()
+        for acao in self._animacoes:
+            self._animacoes[acao] = [
                 pygame.transform.scale(frame, (frame.get_width() * 2, frame.get_height() * 2))
-                for frame in self.animacoes[acao]
+                for frame in self._animacoes[acao]
             ]
 
-        self.image = self.animacoes[self.acao][self.indice_frame]
+        self.image = self._animacoes[self.get_acao()][self.get_indice_frame()]
         self.rect = self.image.get_rect(bottomleft=(x, self._y_chao))
-
 
     @property
     def y_chao(self) -> int:
         return self._y_chao
-
+    
     @y_chao.setter
     def y_chao(self, valor: int):
         self._y_chao = valor
@@ -56,13 +55,13 @@ class Jogador(Entidade):
 
     @property
     def direcao(self) -> int:
-        return self._direcao
-
+        return self.get_direcao()
+    
     @direcao.setter
     def direcao(self, valor: int):
         if valor not in [-1, 1]:
             raise ValueError("Direção deve ser -1 (esquerda) ou 1 (direita)")
-        self._direcao = valor
+        self.set_direcao(valor)
 
     @property
     def num_pocoes(self) -> int:
@@ -75,6 +74,15 @@ class Jogador(Entidade):
     @property
     def atacando(self) -> bool:
         return self._atacando
+        
+    def get_last_dash_time(self) -> int:
+        return self._last_dash_time
+
+    def get_dash_cooldown(self) -> int:
+        return self._dash_cooldown
+        
+    def set_last_dash_time(self, valor: int):
+        self._last_dash_time = valor
 
     def reset(self) -> None:
         super().reset()
@@ -82,7 +90,7 @@ class Jogador(Entidade):
         self._pulando = False
         self._vel_y = 0
         self._num_pocoes = 3
-        self.last_dash_time = -self.dash_cooldown
+        self._last_dash_time = -self._dash_cooldown
 
     def aplicar_gravidade(self) -> None:
         self._vel_y += Constantes.GRAVIDADE
@@ -100,11 +108,11 @@ class Jogador(Entidade):
         dx = 0
         agora = pygame.time.get_ticks()
 
-        if self.is_dashing:
-            if agora > self.dash_end_time:
-                self.is_dashing = False
+        if self._is_dashing:
+            if agora > self._dash_end_time:
+                self._is_dashing = False
             else:
-                self.rect.x += self.dash_speed * self.direcao
+                self.rect.x += self._dash_speed * self.get_direcao()
                 self.rect.clamp_ip(pygame.Rect(0, 0, Constantes.LARGURA, Constantes.ALTURA))
                 return
 
@@ -114,46 +122,46 @@ class Jogador(Entidade):
         if self._atacando or not self.vivo:
             return
 
-        self._defendendo = False
+        self._defendendo = teclas[pygame.K_e]
 
-        if teclas[pygame.K_LEFT]:
-            dx = -self._velocidade
-            self.direcao = -1
-        elif teclas[pygame.K_RIGHT]:
-            dx = self._velocidade
-            self.direcao = 1
-
-        if teclas[pygame.K_UP] and not self._pulando:
-            self._pulando = True
-            self._vel_y = -20
-        
-        if teclas[pygame.K_LSHIFT] and not self.is_dashing:
-            if agora - self.last_dash_time > self.dash_cooldown:
-                self.is_dashing = True
-                self.last_dash_time = agora
-                self.dash_end_time = agora + self.dash_duration
-                
-                # CORREÇÃO: Toca o som de 'poder' ao usar a investida.
-                som_poder = self.asset_manager.get_som('poder')
-                if som_poder:
-                    som_poder.set_volume(volume_efeitos)
-                    som_poder.play()
-        
         if teclas[pygame.K_SPACE] and not self._atacando:
-            self._atacando = True
-            self._dano_aplicado = False
-            self._tempo_ataque = agora
+                self._atacando = True
+                self._dano_aplicado = False
+                self._tempo_ataque = agora
+                
+                som_espada = self._asset_manager.get_som('espada')
+                if som_espada:
+                    som_espada.set_volume(volume_efeitos)
+                    som_espada.play()
+
+        if not self._defendendo:
+            if teclas[pygame.K_LEFT] or teclas[pygame.K_a]:
+                dx = -self._velocidade
+                self.set_direcao(-1)
+            elif teclas[pygame.K_RIGHT] or teclas[pygame.K_d]:
+                dx = self._velocidade
+                self.set_direcao(1)
+
+            if (teclas[pygame.K_UP] or teclas[pygame.K_w]) and not self._pulando:
+                self._pulando = True
+                self._vel_y = -20
             
-            som_espada = self.asset_manager.get_som('espada')
-            if som_espada:
-                som_espada.set_volume(volume_efeitos)
-                som_espada.play()
+            if teclas[pygame.K_LSHIFT] and not self._is_dashing:
+                if agora - self._last_dash_time > self._dash_cooldown:
+                    self._is_dashing = True
+                    self._last_dash_time = agora
+                    self._dash_end_time = agora + self._dash_duration
+                    
+                    som_poder = self._asset_manager.get_som('poder')
+                    if som_poder:
+                        som_poder.set_volume(volume_efeitos)
+                        som_poder.play()
 
-        if teclas[pygame.K_e]:
-            self._defendendo = True
+            if teclas[pygame.K_e]:
+                self._defendendo = True
 
-        if teclas[pygame.K_h] and self._num_pocoes > 0:
-            self.usar_pocao()
+            if teclas[pygame.K_h] and self._num_pocoes > 0:
+                self.usar_pocao()
 
         self.rect.x += dx
         self.rect.clamp_ip(pygame.Rect(0, 0, Constantes.LARGURA, Constantes.ALTURA))
@@ -167,7 +175,7 @@ class Jogador(Entidade):
         self.processar_movimento(teclas, volume_efeitos)
         self.aplicar_gravidade()
 
-        if self.is_dashing:
+        if self._is_dashing:
              nova_acao = 'correr'
         elif self._atacando:
             nova_acao = 'atacar'
@@ -175,7 +183,7 @@ class Jogador(Entidade):
             nova_acao = 'defender'
         elif self._pulando:
             nova_acao = 'pular'
-        elif teclas[pygame.K_LEFT] or teclas[pygame.K_RIGHT]:
+        elif teclas[pygame.K_LEFT] or teclas[pygame.K_RIGHT] or teclas[pygame.K_a] or teclas[pygame.K_d]:
             nova_acao = 'correr'
         else:
             nova_acao = 'parar'
@@ -184,7 +192,7 @@ class Jogador(Entidade):
         super().update()
 
     def pode_causar_dano(self) -> bool:
-        if self._atacando and not self._dano_aplicado and self.indice_frame > 1:
+        if self._atacando and not self._dano_aplicado and self.get_indice_frame() > 1:
             self._dano_aplicado = True
             return True
         return False
@@ -201,8 +209,8 @@ class Jogador(Entidade):
         data.update({
             "num_pocoes": self._num_pocoes,
             "y_chao": self._y_chao,
-            "vida_maxima": self.vida_maxima,
-            "last_dash_time": self.last_dash_time
+            "vida_maxima": self.get_vida_maxima(),
+            "last_dash_time": self._last_dash_time
         })
         return data
 
@@ -216,12 +224,12 @@ class Jogador(Entidade):
         jogador.vida = data.get("vida", vida_maxima)
         jogador.rect.x = data.get("x", 100)
         jogador.rect.y = data.get("y", y_chao - jogador.rect.height)
-        jogador.acao = data.get("acao", "parar")
-        jogador.indice_frame = data.get("indice_frame", 0)
-        jogador.direcao = data.get("direcao", 1)
+        jogador.set_acao(data.get("acao", "parar"))
+        jogador.set_indice_frame(data.get("indice_frame", 0))
+        jogador.set_direcao(data.get("direcao", 1))
         
         jogador._num_pocoes = data.get("num_pocoes", 3)
-        jogador.last_dash_time = data.get("last_dash_time", -jogador.dash_cooldown)
+        jogador._last_dash_time = data.get("last_dash_time", -jogador.get_dash_cooldown())
 
         jogador.animar()
         

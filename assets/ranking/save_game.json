@@ -1,31 +1,47 @@
 {
-    "nome_jogador_atual": "ggd",
+    "nome_jogador_atual": "jj",
     "batalha_estado": {
         "jogador": {
-            "vida": 200,
-            "x": 530,
+            "vida": 40,
+            "x": 745,
             "y": 828,
             "acao": "parar",
-            "indice_frame": 1,
+            "indice_frame": 3,
             "direcao": 1,
-            "num_pocoes": 3,
+            "num_pocoes": 2,
             "y_chao": 900,
             "vida_maxima": 200,
-            "last_dash_time": -3000
+            "last_dash_time": 10082
         },
-        "dragao": null,
+        "dragao": {
+            "vida": 500,
+            "x": 1217,
+            "y": 696,
+            "acao": "parar",
+            "indice_frame": 0,
+            "direcao": 1,
+            "vida_maxima": 500
+        },
         "esqueletos": [
             {
                 "vida": 100,
-                "x": 1979,
+                "x": 793,
+                "y": 784,
+                "acao": "atacar",
+                "indice_frame": 0,
+                "direcao": -1
+            },
+            {
+                "vida": 100,
+                "x": 1425,
                 "y": 784,
                 "acao": "correr",
-                "indice_frame": 5,
+                "indice_frame": 4,
                 "direcao": -1
             }
         ],
-        "fase_batalha": 1,
-        "derrotados": 0,
-        "pontuacao_final": 0
+        "fase_batalha": 2,
+        "derrotados": 6,
+        "pontuacao_final": 1200
     }
 }

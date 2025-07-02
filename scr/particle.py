@@ -5,22 +5,22 @@ from typing import Tuple
 class Particle(pygame.sprite.Sprite):
     def __init__(self, pos: Tuple[int, int], cor: Tuple[int, int, int], direcao: Tuple[float, float] = (0,0)):
         super().__init__()
-        self.x, self.y = pos
+        self._x, self._y = pos
 
-        self.vx = direcao[0] + random.uniform(-2, 2)
-        self.vy = direcao[1] + random.uniform(-3, 1)
-        self.rad = random.randint(4, 7)
-        self.cor = cor
-        self.lifespan = random.randint(15, 25)
+        self._vx = direcao[0] + random.uniform(-2, 2)
+        self._vy = direcao[1] + random.uniform(-3, 1)
+        self._rad = random.randint(4, 7)
+        self._cor = cor
+        self._lifespan = random.randint(15, 25)
 
     def update(self):
-        self.x += self.vx
-        self.y += self.vy
-        self.lifespan -= 1
-        self.rad -= 0.2
-        if self.rad <= 0 or self.lifespan <= 0:
+        self._x += self._vx
+        self._y += self._vy
+        self._lifespan -= 1
+        self._rad -= 0.2
+        if self._rad <= 0 or self._lifespan <= 0:
             self.kill()
 
     def draw(self, tela: pygame.Surface):
-        if self.rad > 0:
-            pygame.draw.circle(tela, self.cor, (int(self.x), int(self.y)), int(self.rad))
+        if self._rad > 0:
+            pygame.draw.circle(tela, self._cor, (int(self._x), int(self._y)), int(self._rad))
