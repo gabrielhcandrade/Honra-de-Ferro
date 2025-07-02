@@ -1,273 +1,197 @@
-@startuml "Honra de Ferro - Diagrama de Classes"
+@startuml
+!theme vibrant
 
-' Seta a direção do diagrama e a aparência para melhor legibilidade
-left to right direction
-skinparam classAttributeIconSize 0
-!theme materia
-
-' Título e Legenda
-title **Diagrama de Classes do Jogo "Honra de Ferro"**
-legend right
-  **Legenda**
-  ---
-  **Relacionamentos**
-  <|-- : Herança
-  *-- : Composição
-  o-- : Agregação
-  --> : Associação / Dependência
-  ---
-  **Visibilidade**
-  + : public
-  # : protected (_ em Python)
-  - : private (__ em Python)
-end legend
-
-'#################################
-'# Classes Principais do Jogo
-'#################################
+' Classes Principais'
 class Game {
-  # tela: pygame.Surface
-  # estado: str
-  # asset_manager: AssetManager
-  # ranking_manager: RankingManager
-  # config: ConfigScreen
-  # batalha: BatalhaDragao
-  --
-  + __init__()
-  + executar()
-  + salvar_progresso_jogo()
-  + carregar_progresso_jogo()
-  # _adicionar_ao_ranking()
-}
-
-class BatalhaDragao {
-  # game: Game
-  # tela: pygame.Surface
-  # asset_manager: AssetManager
-  # jogador: Jogador
-  # dragao: Dragao
-  # esqueletos: Group<Esqueleto>
-  # fireballs: Group<BolaDeFogo>
-  # _fase_batalha: int
-  # pontuacao_final: int
-  --
-  + __init__(game, tela, asset_manager)
-  + atualizar(volume_efeitos)
-  + desenhar()
-  + reset_batalha()
-  # _gerenciar_fases()
-  # _checar_colisoes()
-}
-
-'#################################
-'# Classes de Entidades (Modelo)
-'#################################
-abstract class Entidade {
-  # vida_maxima: int
-  # _vida: int
-  # acao: str
-  # direcao: int
-  # image: pygame.Surface
-  # rect: pygame.Rect
-  --
-  + <<property>> vida: int
-  + <<property>> vivo: bool
-  --
-  + update()
-  + receber_dano(quantidade: int)
-  + curar(quantidade: int)
-  # animar()
-  # mudar_acao(nova_acao: str)
-}
-
-class Jogador extends Entidade {
-  # _velocidade: int
-  # _pulando: bool
-  # _num_pocoes: int
-  # _defendendo: bool
-  # _atacando: bool
-  --
-  + processar_movimento(teclas, volume)
-  + pode_causar_dano(): bool
-  + usar_pocao()
-}
-
-class Esqueleto extends Entidade {
-  # dano: int
-  # raio_ataque: int
-  # velocidade: int
-  --
-  + pode_causar_dano(): bool
-}
-
-class Dragao extends Entidade {
-  # _ataque_cooldown: int
-  # grupo_projeteis: Group
-  --
-  + update(rect_jogador)
-}
-
-class BolaDeFogo {
-  # image: pygame.Surface
-  # rect: pygame.Rect
-  # _vel_x: float
-  # _vel_y: float
-  --
-  + update()
-}
-
-class Pocao {
-  # image: pygame.Surface
-  # rect: pygame.Rect
-  --
-  + update()
-}
-
-'#################################
-'# Classes de UI e Telas
-'#################################
-package "Telas" {
-  class Menu {
-    # tela: pygame.Surface
-    # botoes: List<Button>
-    --
-    + desenhar()
-    + mover_selecao(direcao)
-  }
-
-  class ConfigScreen {
-    # game: Game
-    # volume_musica: float
-    # volume_efeitos: float
-    --
-    + desenhar(tela)
-    + processar_eventos(eventos)
-  }
-
-  class GameOverScreen {
-    # tela: pygame.Surface
-    # opcoes: List<str>
-    --
-    + desenhar()
-  }
-
-  class TelaRankingPygame {
-    # tela: pygame.Surface
-    # ranking_manager: RankingManager
-    --
-    + desenhar()
-  }
-}
-
-'#################################
-'# Classes de Componentes e Managers
-'#################################
-package "Componentes" {
-  class Button {
-    # texto: str
-    # posicao: Tuple
-    --
-    + desenhar(tela, selecionado)
-    + clicado(mouse_pos): bool
-  }
-  
-  class RankingManager {
-    # nome_arquivo: str
-    # jogadores: List<JogadorRanking>
-    --
-    + adicionar_jogador(jogador)
-    + salvar_em_arquivo()
-    + carregar_de_arquivo()
-  }
-
-  class JogadorRanking {
-    + nome: str
-    + pontuacao: int
-  }
+  - _tela: pygame.Surface
+  - _asset_manager: AssetManager
+  - _estado: str
+  - _ranking_manager: RankingManager
+  - _menu: Menu
+  - _config: ConfigScreen
+  - _batalha: BatalhaDragao
+  - _game_over_screen: GameOverScreen
+  - _tela_ranking_pygame: TelaRankingPygame
+  + executar(): None
+  + set_estado(estado: str): None
+  + salvar_progresso_jogo(): None
+  + carregar_progresso_jogo(): bool
 }
 
 class AssetManager {
-  # _animations: Dict
-  # _images: Dict
-  # _sounds: Dict
-  --
-  + get_animacao(personagem, acao)
-  + get_imagem(nome)
-  + get_som(nome)
+  - _animations: Dict
+  - _images: Dict
+  - _sounds: Dict
+  + get_animacao(personagem: str, acao: str): List[pygame.Surface]
+  + get_imagem(nome_imagem: str): pygame.Surface
+  + get_som(nome_som: str): Optional[pygame.mixer.Sound]
 }
 
-class Constantes {
-  + {static} LARGURA: int
-  + {static} ALTURA: int
-  + {static} VERMELHO: Tuple
-  + {static} GRAVIDADE: float
+class BatalhaDragao {
+  - _jogador: Jogador
+  - _dragao: Optional[Dragao]
+  - _esqueletos: pygame.sprite.Group
+  - _fireballs: pygame.sprite.Group
+  - _pocoes: pygame.sprite.Group
+  + atualizar(volume_efeitos: float): Optional[str]
+  + desenhar(): None
+  + reset_batalha(): None
+  + to_dict(): Dict
+  + from_dict(data: Dict): None
 }
 
+' Entidades'
+abstract class Entidade(pygame.sprite.Sprite) {
+  # _vida: int
+  # _vida_maxima: int
+  # _acao: str
+  # _direcao: int
+  + receber_dano(quantidade: int): None
+  + curar(quantidade: int): None
+  + update(): None
+  + to_dict(): Dict
+}
 
-'#################################
-'# Relacionamentos
-'#################################
+class Jogador(Entidade) {
+  - _num_pocoes: int
+  - _atacando: bool
+  - _defendendo: bool
+  + processar_movimento(...): None
+  + usar_pocao(): None
+  + coletar_pocao(): None
+}
 
-' ---- Herança ----
-Entidade <|-- Jogador
-Entidade <|-- Esqueleto
-Entidade <|-- Dragao
+class Esqueleto(Entidade) {
+  - _dano: int
+  - _raio_ataque: int
+  + update(rect_jogador: pygame.Rect): None
+}
 
-' ---- Composição (Game possui e gerencia os componentes principais) ----
+class Dragao(Entidade) {
+  - _ataque_cooldown: int
+  - _grupo_projeteis: pygame.sprite.Group
+  + update(rect_jogador: pygame.Rect): None
+}
+
+' Sprites e Componentes'
+class BolaDeFogo(pygame.sprite.Sprite) {
+  - _vel_x: float
+  - _vel_y: float
+  + update(): None
+}
+
+class Pocao(pygame.sprite.Sprite) {
+  + update(): None
+}
+
+class DanoPopup(pygame.sprite.Sprite) {
+  - _lifespan: int
+  + update(): None
+}
+
+class Particle(pygame.sprite.Sprite) {
+    - _lifespan: int
+    + update(): None
+}
+
+class Button {
+  - _texto: str
+  - _posicao: Tuple
+  + desenhar(tela: pygame.Surface, selecionado: bool): None
+  + clicado(mouse_pos: Tuple): bool
+}
+
+' Sistema de Ranking'
+class RankingManager {
+  - _jogadores: List[JogadorRanking]
+  + adicionar_jogador(jogador: JogadorRanking): None
+  + salvar_em_arquivo(): None
+  + carregar_de_arquivo(): None
+}
+
+class JogadorRanking {
+  - _nome: str
+  - _pontuacao: int
+  + to_dict(): Dict
+}
+
+class NomeJogador {
+    - _nome: str
+    - _ativo: bool
+    + processar_evento(evento: pygame.event.Event): Optional[str]
+    + desenhar(tela: pygame.Surface): None
+}
+
+' Telas do Jogo'
+package "Telas" {
+  class Menu {
+    - _botoes: List[Button]
+    + desenhar(): None
+  }
+
+  class Menu2 {
+    + desenhar(): None
+  }
+
+  class ConfigScreen {
+    - _volume_musica: float
+    - _volume_efeitos: float
+    + desenhar(tela: pygame.Surface): None
+  }
+
+  class GameOverScreen {
+    - _opcoes: List[str]
+    + desenhar(): None
+  }
+
+  class TelaRankingPygame {
+    - _ranking_manager: RankingManager
+    + desenhar(): None
+  }
+}
+
+' Relacionamentos'
+
+'Composição: Game é composto por suas telas e sistemas principais'
 Game "1" *-- "1" AssetManager
-Game "1" *-- "1" RankingManager
 Game "1" *-- "1" BatalhaDragao
+Game "1" *-- "1" RankingManager
+Game "1" *-- "1" NomeJogador
 Game "1" *-- "1" Menu
 Game "1" *-- "1" ConfigScreen
 Game "1" *-- "1" GameOverScreen
 Game "1" *-- "1" TelaRankingPygame
+Game "1" *-- "1" Menu2
 
-' ---- Composição/Agregação dentro da Batalha ----
-BatalhaDragao "1" *-- "1" Jogador
-BatalhaDragao "1" *-- "0..1" Dragao
-BatalhaDragao "1" o-- "*" Esqueleto
-BatalhaDragao "1" o-- "*" Pocao
-BatalhaDragao "1" o-- "*" BolaDeFogo
+'Agregação: Batalha agrega as entidades e outros sprites'
+BatalhaDragao o-- "1" Jogador
+BatalhaDragao o-- "0..1" Dragao
+BatalhaDragao o-- "*" Esqueleto
+BatalhaDragao o-- "*" Pocao
+BatalhaDragao o-- "*" BolaDeFogo
+BatalhaDragao o-- "*" Particle
+BatalhaDragao o-- "1" AssetManager
 
-' ---- Composição de UI ----
-Menu "1" *-- "1..*" Button
+'Herança: Entidades especializadas herdam de Entidade'
+Entidade <|-- Jogador
+Entidade <|-- Esqueleto
+Entidade <|-- Dragao
 
-' ---- Agregação (RankingManager contém uma lista de JogadorRanking) ----
-RankingManager "1" o-- "0..*" JogadorRanking
+'Dependência/Uso'
+Game ..> Button : "usa para criar menus"
+Menu o-- "*" Button
 
-' ---- Dependências / Associações ----
-Game --> Button : Usa para criar o menu
-BatalhaDragao --> AssetManager : Depende para obter assets
-Jogador --> AssetManager : Depende para obter assets
-Dragao "1" --> "0..*" BolaDeFogo : Cria e dispara
-TelaRankingPygame ..> RankingManager : Usa para exibir dados
+Entidade ..> DanoPopup : "cria ao receber dano"
+Entidade o-- "1" AssetManager
 
-' ---- Dependência de Constantes (muitas classes usam) ----
-Game ..> Constantes
-BatalhaDragao ..> Constantes
-Jogador ..> Constantes
-BolaDeFogo ..> Constantes
+Dragao ..> BolaDeFogo : "cria para atacar"
+Jogador ..> Pocao : "coleta"
 
+RankingManager o-- "*" JogadorRanking
+TelaRankingPygame ..> RankingManager : "usa para exibir"
+NomeJogador ..> RankingManager : "usa para validar nome"
 
-' ---- Notas Explicativas ----
-note top of Entidade
-  Classe base para todas as
-  entidades que participam
-  da batalha.
-end note
-
-note right of Game
-  Classe principal que
-  orquestra o jogo,
-  gerencia os estados
-  (menu, batalha, etc)
-  e os componentes.
-end note
-
-note left of BatalhaDragao
-  Controla toda a lógica
-  e o estado da cena
-  de batalha.
-end note
+BatalhaDragao ..> Game : "informa estado"
+ConfigScreen ..> Game
 
 @enduml
